@@ -1,0 +1,11 @@
+fastapi>=0.95
+uvicorn[standard]>=0.21
+langchain>=0.0.280
+transformers>=4.40.0
+sentence-transformers>=2.2.2
+python-multipart>=0.0.6
+aiofiles>=23.1.0
+PyPDF2>=3.0.0
+numpy>=1.24.0
+chromadb>=0.3.29; extra == 'chroma'
+pydantic>=1.10

@@ -1,0 +1,12 @@
+venv/
+backend/.venv/
+node_modules/
+frontend/.next/
+env.local
+*.pyc
+__pycache__/
+db/
+chromadb/
+*.log
+*.sqlite
+*.db

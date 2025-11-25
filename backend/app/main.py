@@ -6,9 +6,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 import shutil
 
-from core.llm import llm
-from core.store import VectorStore
-from utils.file_processing import extract_text_from_file
+from app.core.llm import llm
+from app.core.store import VectorStore
+from app.utils.file_processing import extract_text_from_file
 
 app = FastAPI(title="TalkFlow API")
 
@@ -28,9 +28,9 @@ store = VectorStore(persist_dir=os.path.join(BASE_DIR, "..", "..", "db"))
 
 # basic personalities
 PERSONALITIES = {
-    "default": "A helpful, concise assistant.",
-    "yoda": "Answer like Yoda from Star Wars: invert sentences, wise tone.",
-    "pirate": "Answer like a cheerful pirate, use nautical slang.",
+    "default": "You are a helpful AI assistant. Answer clearly and concisely.",
+    "yoda": "You are Yoda from Star Wars. Speak in Yoda's style: rearrange sentences, use wisdom and 'hmm' often. Example: 'Much to learn, you still have.'",
+    "pirate": "You are a cheerful pirate. Use pirate slang like 'ahoy', 'matey', 'arr', 'treasure'. Talk about the sea and sailing.",
 }
 
 
@@ -68,10 +68,26 @@ def stream(q: str, session_id: str = "default", personality: str = "default", la
     # Embed query, fetch top docs, build prompt
     q_emb = llm.embed([q])[0]
     hits = store.query(q_emb, top_k=3)
-    context = "\n\n".join([h["metadata"]["text"] if isinstance(h.get("metadata"), dict) and h["metadata"].get("text") else str(h.get("metadata")) for h in hits])
+    
+    # Build context from retrieved documents
+    if hits and len(hits) > 0:
+        context_parts = []
+        for h in hits:
+            if isinstance(h.get("metadata"), dict) and h["metadata"].get("text"):
+                context_parts.append(h["metadata"]["text"])
+        context = "\n".join(context_parts) if context_parts else "No relevant documents found."
+    else:
+        context = "No documents uploaded yet."
+    
+    # Get personality instruction
     persona = PERSONALITIES.get(personality, PERSONALITIES["default"])
-    prompt = f"You are: {persona}\nLanguage: {lang}\nContext: {context}\nUser: {q}\nAssistant:"
-
+    
+    # Build a clear, structured prompt
+    if context != "No documents uploaded yet." and context != "No relevant documents found.":
+        prompt = f"{persona}\n\nContext from documents:\n{context}\n\nQuestion: {q}\n\nAnswer:"
+    else:
+        prompt = f"{persona}\n\nQuestion: {q}\n\nAnswer:"
+    
     def event_stream():
         try:
             for chunk in llm.generate_stream(prompt):

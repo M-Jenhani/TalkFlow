@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from 'react'
+'use client'
+
 import Chat from '../components/Chat'
 import Upload from '../components/Upload'
 

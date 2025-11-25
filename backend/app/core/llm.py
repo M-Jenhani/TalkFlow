@@ -5,8 +5,9 @@ from transformers import pipeline, AutoTokenizer, AutoModelForSeq2SeqLM
 from sentence_transformers import SentenceTransformer
 import numpy as np
 
-# Small default models for local testing — swap for larger models in production
-HF_GEN_MODEL = os.environ.get("HF_GEN_MODEL", "google/flan-t5-small")
+# Default models - flan-t5-base is 250MB, better quality than small
+# For even better: try "google/flan-t5-large" (800MB) or "google/flan-t5-xl" (3GB)
+HF_GEN_MODEL = os.environ.get("HF_GEN_MODEL", "google/flan-t5-base")
 HF_EMB_MODEL = os.environ.get("HF_EMB_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
 
 
@@ -24,8 +25,16 @@ class LLM:
         embs = self.embedder.encode(texts, convert_to_numpy=True)
         return [e.tolist() for e in embs]
 
-    def generate(self, prompt: str, max_length: int = 256) -> str:
-        out = self.pipe(prompt, max_length=max_length, do_sample=True, top_k=50, top_p=0.95)
+    def generate(self, prompt: str, max_length: int = 512) -> str:
+        out = self.pipe(
+            prompt, 
+            max_new_tokens=256,
+            do_sample=True, 
+            temperature=0.7,
+            top_k=50, 
+            top_p=0.95,
+            repetition_penalty=1.2
+        )
         return out[0]["generated_text"]
 
     def generate_stream(self, prompt: str, chunk_size: int = 120):

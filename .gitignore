@@ -10,3 +10,4 @@ chromadb/
 *.log
 *.sqlite
 *.db
+backend/app/uploads/

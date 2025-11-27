@@ -1,14 +1,14 @@
 # TalkFlow
 
-TalkFlow is a local-first AI chatbot scaffold combining:
+TalkFlow is a full-stack AI chatbot with advanced RAG capabilities:
 
-- FastAPI backend (Python)
-- LangChain-style RAG (embeddings + retrieval)
-- Optional Chroma vectorstore (falls back to local store)
-- **Hugging Face Inference API** for high-quality LLM responses (Mistral-7B by default)
-- sentence-transformers embeddings (local)
-- Next.js 14 frontend (app router) with streaming chat UI
-- Personality selection, multilingual prompts, browser voice in/out (Web Speech API)
+- FastAPI backend (Python 3.12)
+- Orchestrated RAG retrieval (hybrid semantic + keyword search with intelligent fallback)
+- ChromaDB persistent vector storage with JSON fallback
+- **Hugging Face Inference API** for high-quality LLM responses (Llama 3.2-3B-Instruct)
+- sentence-transformers embeddings (all-MiniLM-L6-v2, runs locally)
+- Next.js 14 frontend (app router) with modern dark-themed streaming chat UI
+- Personality selection, multilingual support (en/es/fr), browser voice in/out (Web Speech API)
 
 This repository is scaffolded for local development (no Docker by default).
 
@@ -91,19 +91,24 @@ npm run dev
 
 ## Notes
 
-- The backend uses **Hugging Face Inference API** (free tier) with Mistral-7B for high-quality responses
-- Embeddings run locally using sentence-transformers (no API needed)
+- The backend uses **Hugging Face Inference API** (free tier) with Llama 3.2-3B-Instruct for high-quality responses
+- Embeddings run locally using sentence-transformers/all-MiniLM-L6-v2 (no API needed)
+- ChromaDB stores vectors persistently in `db/` directory for fast retrieval
+- Orchestrated retrieval combines semantic search, keyword matching, and hybrid approaches
 - First API call may take 10-20 seconds as the model loads
 - Free tier has rate limits; for production, consider paid tier
-- To change models, edit `HF_INFERENCE_MODEL` in `.env` file
+- To change models, edit the model name in `backend/app/core/llm.py`
 
 ## Features
 
-- ✅ Upload documents (PDF, TXT, MD) for RAG
-- ✅ Real streaming responses (token-by-token)
-- ✅ Personality modes (Default, Yoda, Pirate)
-- ✅ Multilingual support
-- ✅ Voice input/output (browser-based)
+- ✅ Upload documents (PDF, TXT, MD) for RAG with drag-and-drop UI
+- ✅ Real-time SSE streaming responses (token-by-token)
+- ✅ Orchestrated retrieval (semantic + keyword + hybrid strategies)
+- ✅ Persistent ChromaDB vector storage
+- ✅ Personality modes (Default, Yoda, Pirate) with visual UI
+- ✅ Multilingual support (English, Spanish, French)
+- ✅ Voice input/output (browser-based TTS/STT)
+- ✅ Modern dark-themed ChatGPT-like interface
 - ✅ Conversation memory per session
 
 See `backend/README.md` and `frontend/README.md` for more details.

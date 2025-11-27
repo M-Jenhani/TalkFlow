@@ -1,14 +1,20 @@
 import '../styles/globals.css'
 
 export const metadata = {
-  title: 'TalkFlow',
+  title: 'TalkFlow - AI Chatbot',
+  description: 'Advanced AI chatbot with RAG, personalities, and multilingual support',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html>
+    <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+      </head>
       <body>
-        <main style={{ padding: 24, fontFamily: 'Inter, system-ui, Arial' }}>{children}</main>
+        <main>{children}</main>
       </body>
     </html>
   )

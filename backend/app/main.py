@@ -54,6 +54,37 @@ def personalities():
     return {"personalities": list(PERSONALITIES.keys())}
 
 
+@app.get("/retrieval-test")
+def retrieval_test(q: str, method: str = "orchestrated"):
+    """
+    Test different retrieval methods
+    method: 'semantic', 'keyword', 'hybrid', 'orchestrated'
+    """
+    q_emb = llm.embed([q])[0]
+    
+    if method == "semantic":
+        hits = store.query(q_emb, top_k=3)
+    elif method == "keyword":
+        hits = store.keyword_search(q, top_k=3)
+    elif method == "hybrid":
+        hits = store.hybrid_search(q_emb, q, top_k=3)
+    else:  # orchestrated
+        hits = store.orchestrated_retrieval(q_emb, q, top_k=3)
+    
+    return {
+        "method": method,
+        "query": q,
+        "results": [
+            {
+                "id": h["id"],
+                "score": h["score"],
+                "text": h["metadata"].get("text", "")[:200] + "..." if len(h["metadata"].get("text", "")) > 200 else h["metadata"].get("text", "")
+            }
+            for h in hits
+        ]
+    }
+
+
 @app.post("/upload")
 async def upload(file: UploadFile = File(...), metadata: str = Form("")):
     file_id = str(uuid.uuid4())
@@ -75,9 +106,9 @@ async def upload(file: UploadFile = File(...), metadata: str = Form("")):
 
 @app.get("/stream")
 def stream(q: str, session_id: str = "default", personality: str = "default", lang: str = "en"):
-    # Embed query, fetch top docs, build prompt
+    # Embed query and use orchestrated retrieval (hybrid semantic + keyword)
     q_emb = llm.embed([q])[0]
-    hits = store.query(q_emb, top_k=3)
+    hits = store.orchestrated_retrieval(q_emb, q, top_k=3)
     
     # Build context from retrieved documents
     if hits and len(hits) > 0:

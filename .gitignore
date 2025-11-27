@@ -11,3 +11,5 @@ chromadb/
 *.sqlite
 *.db
 backend/app/uploads/
+.env
+backend/.env

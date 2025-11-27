@@ -16,8 +16,13 @@ class VectorStore:
         self.persist_dir = persist_dir
         os.makedirs(self.persist_dir, exist_ok=True)
         if CHROMA_AVAILABLE:
-            client = chromadb.Client()
-            self.col = client.create_collection(name="talkflow")
+            # Use persistent client instead of in-memory
+            client = chromadb.PersistentClient(path=self.persist_dir)
+            # Get or create collection
+            try:
+                self.col = client.get_collection(name="talkflow")
+            except:
+                self.col = client.create_collection(name="talkflow")
         else:
             self.path = os.path.join(self.persist_dir, "store.json")
             if os.path.exists(self.path):

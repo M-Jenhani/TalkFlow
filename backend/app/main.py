@@ -5,6 +5,10 @@ from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 import shutil
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 from app.core.llm import llm
 from app.core.store import VectorStore
@@ -31,6 +35,12 @@ PERSONALITIES = {
     "default": "You are a helpful AI assistant. Answer clearly and concisely.",
     "yoda": "You are Yoda from Star Wars. Speak in Yoda's style: rearrange sentences, use wisdom and 'hmm' often. Example: 'Much to learn, you still have.'",
     "pirate": "You are a cheerful pirate. Use pirate slang like 'ahoy', 'matey', 'arr', 'treasure'. Talk about the sea and sailing.",
+}
+
+LANGUAGE_INSTRUCTIONS = {
+    "en": "IMPORTANT: You MUST respond in English only, regardless of the question's language.",
+    "es": "IMPORTANTE: Debes responder SOLO en español, sin importar el idioma de la pregunta.",
+    "fr": "IMPORTANT: Tu dois répondre UNIQUEMENT en français, quelle que soit la langue de la question.",
 }
 
 
@@ -79,14 +89,15 @@ def stream(q: str, session_id: str = "default", personality: str = "default", la
     else:
         context = "No documents uploaded yet."
     
-    # Get personality instruction
+    # Get personality instruction and language instruction
     persona = PERSONALITIES.get(personality, PERSONALITIES["default"])
+    lang_instruction = LANGUAGE_INSTRUCTIONS.get(lang, LANGUAGE_INSTRUCTIONS["en"])
     
-    # Build a clear, structured prompt
+    # Build a clear, structured prompt with language enforcement
     if context != "No documents uploaded yet." and context != "No relevant documents found.":
-        prompt = f"{persona}\n\nContext from documents:\n{context}\n\nQuestion: {q}\n\nAnswer:"
+        prompt = f"{persona}\n\n{lang_instruction}\n\nContext from documents:\n{context}\n\nQuestion: {q}\n\nAnswer:"
     else:
-        prompt = f"{persona}\n\nQuestion: {q}\n\nAnswer:"
+        prompt = f"{persona}\n\n{lang_instruction}\n\nQuestion: {q}\n\nAnswer:"
     
     def event_stream():
         try:

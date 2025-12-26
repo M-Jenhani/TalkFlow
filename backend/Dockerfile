@@ -1,17 +1,20 @@
-FROM python:3.11-alpine AS builder
+FROM python:3.11-slim AS builder
 
 # Install build dependencies
-RUN apk add --no-cache build-base
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory
 WORKDIR /app
 
-# Copy requirements and install dependencies
-COPY requirements.txt .
+# Copy requirements.txt from the backend directory
+COPY backend/requirements.txt .
+# Install Python dependencies
 RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 
 # Final runtime image
-FROM python:3.11-alpine
+FROM python:3.11-slim
 
 # Set the working directory
 WORKDIR /app

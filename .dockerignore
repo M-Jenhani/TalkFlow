@@ -12,3 +12,13 @@ frontend/
 .next/
 dist/
 build/
+# Ensure unnecessary files are excluded from Docker build context
+node_modules/
+__pycache__/
+.git/
+*.log
+*.sqlite
+*.db
+backend/app/uploads/
+.env
+backend/.env

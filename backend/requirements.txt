@@ -1,7 +1,9 @@
 fastapi>=0.95
 uvicorn[standard]>=0.21
 langchain>=0.0.280
-sentence-transformers>=2.2.2
+sentence-transformers==2.2.2
+torch==2.0.1
+torchvision==0.15.2
 python-multipart>=0.0.6
 aiofiles>=23.1.0
 PyPDF2>=3.0.0

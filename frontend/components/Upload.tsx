@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+
 export default function Upload() {
   const [file, setFile] = useState<File | null>(null)
   const [status, setStatus] = useState<string | null>(null)
@@ -17,7 +19,7 @@ export default function Upload() {
     setStatus(null)
     setUploading(true)
     try {
-      const res = await fetch('http://localhost:8000/upload', { method: 'POST', body: fd })
+      const res = await fetch(`${API_BASE}/upload`, { method: 'POST', body: fd })
       const j = await res.json()
       if (res.ok) {
         setStatus('✓ Upload successful')

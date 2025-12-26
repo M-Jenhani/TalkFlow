@@ -16,9 +16,15 @@ from app.utils.file_processing import extract_text_from_file
 
 app = FastAPI(title="TalkFlow API")
 
+# Allow localhost for development and production frontend URLs
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
+allowed_origins = [FRONTEND_URL]
+if FRONTEND_URL != "http://localhost:3000":
+    allowed_origins.append("http://localhost:3000")  # Keep local dev working
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

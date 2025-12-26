@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react'
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+
 const PERSONALITIES = [
   { id: 'default', label: 'Default', icon: '🤖' },
   { id: 'yoda', label: 'Yoda', icon: '🧙' },
@@ -41,7 +43,7 @@ export default function Chat() {
     setIsStreaming(true)
     
     const q = encodeURIComponent(userMessage)
-    const url = `http://localhost:8000/stream?q=${q}&session_id=default&personality=${personality}&lang=${lang}`
+    const url = `${API_BASE}/stream?q=${q}&session_id=default&personality=${personality}&lang=${lang}`
     
     if (esRef.current) {
       esRef.current.close()

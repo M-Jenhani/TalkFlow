@@ -13,9 +13,7 @@ except Exception:
 
 
 class VectorStore:
-    def __init__(self, persist_dir: str = None):
-        if persist_dir is None:
-            persist_dir = os.path.join(os.path.dirname(__file__), "..", "..", "db")
+    def __init__(self, persist_dir: str = "c:\\portfolioforcv\\TalkFlow\\db"):
         self.persist_dir = persist_dir
         os.makedirs(self.persist_dir, exist_ok=True)
         if CHROMA_AVAILABLE:

@@ -1,48 +1,31 @@
-FROM python:3.11-slim AS builder
+FROM python:3.11-slim
 
-# Install build dependencies
+WORKDIR /app
+
+# Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Set the working directory
-WORKDIR /app
-
-# Copy requirements.txt from the backend directory
+# Copy requirements.txt from the root context
 COPY requirements.txt .
 
-# Install Python dependencies (CPU-only PyTorch to reduce size)
-RUN pip install --no-cache-dir --prefix=/install \
-    torch==2.1.2 torchvision==0.16.2 \
-    && pip install --no-cache-dir --prefix=/install -r requirements.txt \
-    && find /install -type f -name "*.so" -exec strip -s {} \; 2>/dev/null || true \
-    && find /install -type d \( -name "tests" -o -name "__pycache__" -o -name "*.dist-info" -o -name "*.egg-info" -o -name "examples" -o -name ".pytest_cache" \) -exec rm -rf {} + 2>/dev/null || true \
-    && find /install -type f -name "*.pyc" -delete \
-    && find /install -type f -name "*.pyo" -delete \
-    && find /install -type f -name "*.pyd" -delete \
-    && find /install -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Final runtime image
-FROM python:3.11-slim
+# Copy application code
+COPY . .
 
-# Set the working directory
-WORKDIR /app
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PORT=8000
 
-# Copy installed dependencies from the builder stage
-COPY --from=builder /install /usr/local
+# Expose the port
+EXPOSE 8000
 
-# Copy only the backend application (not frontend, docs, etc.)
-COPY app ./app
-COPY .env* ./
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python -c "import requests; requests.get('http://localhost:8000/health')" || exit 1
 
-# Minimal cleanup of installed dependencies
-RUN find /usr/local -type f -name "*.so" -exec strip -s {} \; 2>/dev/null || true && \
-    find /usr/local -type d \( -name "tests" -o -name "__pycache__" -o -name "*.dist-info" -o -name "*.egg-info" -o -name "examples" -o -name ".pytest_cache" -o -name "docs" \) -exec rm -rf {} + 2>/dev/null || true && \
-    find /usr/local -type f \( -name "*.pyc" -o -name "*.pyo" -o -name "*.pyd" \) -delete && \
-    rm -rf /usr/local/share/doc /usr/local/share/man /usr/local/share/info && \
-    rm -rf /usr/local/include && \
-    find /usr/local -name "*.a" -delete && \
-    find /usr/local -name "*.la" -delete
-
-# Command to run the application
+# Start the application
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

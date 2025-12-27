@@ -22,3 +22,16 @@ __pycache__/
 backend/app/uploads/
 .env
 backend/.env
+.pytest_cache/
+.tox/
+*.egg-info/
+.coverage
+htmlcov/
+.mypy_cache/
+*.pot
+DEPLOYMENT*.md
+QUICK_START*.md
+RAILWAY*.md
+QUICK_DEPLOY.md
+railway.json
+start.sh

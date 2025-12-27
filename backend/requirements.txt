@@ -1,7 +1,6 @@
 fastapi>=0.95
 uvicorn[standard]>=0.21
 langchain>=0.0.280
-sentence-transformers==2.2.2
 python-multipart>=0.0.6
 aiofiles>=23.1.0
 PyPDF2>=3.0.0
@@ -10,3 +9,6 @@ pydantic>=1.10
 huggingface-hub<0.17
 requests>=2.31.0
 python-dotenv>=1.0.0
+torch==2.1.2+cpu
+torchvision==0.16.2+cpu
+sentence-transformers==2.2.2

@@ -32,8 +32,8 @@ WORKDIR /app
 COPY --from=builder /install /usr/local
 
 # Copy only the backend application (not frontend, docs, etc.)
-COPY backend/app ./app
-COPY backend/.env* ./
+COPY app ./app
+COPY .env* ./
 
 # Minimal cleanup of installed dependencies
 RUN find /usr/local -type f -name "*.so" -exec strip -s {} \; 2>/dev/null || true && \

@@ -25,5 +25,11 @@ COPY --from=builder /install /usr/local
 # Copy application files
 COPY . .
 
+# Copy .env file if it exists
+COPY backend/.env* /app/backend/
+
+# Set working directory to backend
+WORKDIR /app/backend
+
 # Command to run the application
-CMD ["./start.sh"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

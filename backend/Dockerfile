@@ -16,7 +16,7 @@ RUN pip install --no-cache-dir --prefix=/install \
     torch==2.1.2 torchvision==0.16.2 \
     && pip install --no-cache-dir --prefix=/install -r requirements.txt \
     && find /install -type f -name "*.so" -exec strip -s {} \; 2>/dev/null || true \
-    && find /install -type d \( -name "tests" -o -name "__pycache__" -o -name "*.dist-info" -o -name "*.egg-info" -o -name "examples" -o -name "test" -o -name ".pytest_cache" \) -exec rm -rf {} + 2>/dev/null || true \
+    && find /install -type d \( -name "tests" -o -name "__pycache__" -o -name "*.dist-info" -o -name "*.egg-info" -o -name "examples" -o -name ".pytest_cache" \) -exec rm -rf {} + 2>/dev/null || true \
     && find /install -type f -name "*.pyc" -delete \
     && find /install -type f -name "*.pyo" -delete \
     && find /install -type f -name "*.pyd" -delete \
@@ -37,12 +37,9 @@ COPY .env* ./
 
 # Minimal cleanup of installed dependencies
 RUN find /usr/local -type f -name "*.so" -exec strip -s {} \; 2>/dev/null || true && \
-    find /usr/local -type d \( -name "tests" -o -name "__pycache__" -o -name "*.dist-info" -o -name "*.egg-info" -o -name "examples" -o -name "test" -o -name ".pytest_cache" -o -name "docs" \) -exec rm -rf {} + 2>/dev/null || true && \
+    find /usr/local -type d \( -name "tests" -o -name "__pycache__" -o -name "*.dist-info" -o -name "*.egg-info" -o -name "examples" -o -name ".pytest_cache" -o -name "docs" \) -exec rm -rf {} + 2>/dev/null || true && \
     find /usr/local -type f \( -name "*.pyc" -o -name "*.pyo" -o -name "*.pyd" \) -delete && \
     rm -rf /usr/local/share/doc /usr/local/share/man /usr/local/share/info && \
-    rm -rf /usr/local/lib/python*/site-packages/torch/test* && \
-    rm -rf /usr/local/lib/python*/site-packages/torchvision/test* && \
-    rm -rf /usr/local/lib/python*/site-packages/*/tests && \
     rm -rf /usr/local/include && \
     find /usr/local -name "*.a" -delete && \
     find /usr/local -name "*.la" -delete

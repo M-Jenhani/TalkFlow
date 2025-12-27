@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: talkflow-backend
+    env: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
+    envVars:
+      - key: HF_API_TOKEN
+        sync: false
+      - key: FRONTEND_URL
+        value: https://your-frontend-url.vercel.app
+      - key: HF_EMB_MODEL
+        value: sentence-transformers/all-MiniLM-L6-v2
+      - key: HF_INFERENCE_MODEL
+        value: meta-llama/Llama-3.2-3B-Instruct
+    plan: free

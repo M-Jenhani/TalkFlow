@@ -14,8 +14,8 @@ HF_API_URL = "https://router.huggingface.co/v1/chat/completions"
 
 class LLM:
     def __init__(self):
-        # Embeddings (still local)
-        self.embedder = SentenceTransformer(HF_EMB_MODEL)
+        # Lazy load embedder to save memory on startup
+        self._embedder = None
         
         # Check if HF token is set
         if not HF_API_TOKEN:
@@ -28,6 +28,14 @@ class LLM:
             print("4. Restart the backend")
             print("="*80 + "\n")
 
+    @property
+    def embedder(self):
+        """Lazy load the embedding model"""
+        if self._embedder is None:
+            print(f"Loading embedding model: {HF_EMB_MODEL}")
+            self._embedder = SentenceTransformer(HF_EMB_MODEL)
+        return self._embedder
+    
     def embed(self, texts: List[str]) -> List[List[float]]:
         """Generate embeddings for texts"""
         embs = self.embedder.encode(texts, convert_to_numpy=True)

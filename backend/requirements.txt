@@ -9,8 +9,13 @@ requests>=2.31.0
 python-dotenv>=1.0.0
 
 # ML dependencies - CPU-only PyTorch for smaller size
+# Use PyTorch 2.2+ for compatibility with latest transformers
 --extra-index-url https://download.pytorch.org/whl/cpu
-torch==2.0.1+cpu
+torch==2.2.0+cpu
 sentence-transformers>=2.2.2
+transformers>=4.30.0
 huggingface-hub>=0.19.0
 numpy>=1.24.0,<2.0.0
+
+# Vector store (optional, has JSON fallback)
+chromadb>=0.4.0

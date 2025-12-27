@@ -4,11 +4,12 @@
 
 The following optimizations have been made to fit within Render's 512MB free tier:
 
-1. **CPU-only PyTorch** (~100MB vs 800MB+)
+1. **CPU-only PyTorch** (~150MB vs 800MB+ for CUDA version)
 2. **Lazy loading** of embedding models (loaded only when needed)
-3. **Removed heavy dependencies** (langchain, chromadb)
-4. **Using smallest embedding model** (all-MiniLM-L6-v2)
+3. **Lightweight ChromaDB** with JSON fallback for vector storage
+4. **Using smallest embedding model** (all-MiniLM-L6-v2 - only ~90MB)
 5. **Single worker** in uvicorn to reduce memory usage
+6. **No training dependencies** - inference only
 
 ## Deployment Steps
 

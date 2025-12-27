@@ -47,8 +47,5 @@ RUN find /usr/local -type f -name "*.so" -exec strip -s {} \; 2>/dev/null || tru
     find /usr/local -name "*.a" -delete && \
     find /usr/local -name "*.la" -delete
 
-# Set working directory to backend
-WORKDIR /app/backend
-
 # Command to run the application
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,33 +1,76 @@
-node_modules
+# Node/Frontend
+node_modules/
 npm-debug.log
-.git
-.gitignore
-README.md
-.env
-.venv
-__pycache__
-*.pyc
-.DS_Store
-frontend/
 .next/
 dist/
 build/
-# Ensure unnecessary files are excluded from Docker build context
-node_modules/
-__pycache__/
+frontend/
+
+# Git
 .git/
-*.log
-*.sqlite
-*.db
-backend/app/uploads/
-.env
-backend/.env
+.gitignore
+.gitattributes
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+.eggs/
+*.egg-info/
 .pytest_cache/
 .tox/
-*.egg-info/
 .coverage
+.coverage.*
 htmlcov/
 .mypy_cache/
+.dmypy.json
+dmypy.json
+.venv/
+venv/
+env/
+ENV/
+
+# Environment & Config
+.env
+.env.*
+backend/.env
+backend/.env.*
+
+# IDE/Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Project files
+*.db
+*.sqlite
+*.sqlite3
+backend/app/uploads/
+
+# Documentation & CI
+docs/
+DEPLOYMENT*.md
+QUICK_*.md
+RAILWAY*.md
+railway.json
+.github/
+*.md
+
+# OS & Misc
+.DS_Store
+Thumbs.db
+*.log
+*.bak
+*.tmp
+.cache/
+cache/
 *.pot
 DEPLOYMENT*.md
 QUICK_START*.md

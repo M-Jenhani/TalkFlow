@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 # Copy requirements.txt from the backend directory
-COPY requirements.txt .
+COPY backend/requirements.txt .
 
 # Install Python dependencies (CPU-only PyTorch to reduce size)
 RUN pip install --no-cache-dir --prefix=/install \

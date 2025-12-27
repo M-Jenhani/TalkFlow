@@ -11,7 +11,7 @@ frontend/
 .gitignore
 .gitattributes
 
-# Python
+# Python & Cache
 __pycache__/
 *.pyc
 *.pyo
@@ -32,6 +32,10 @@ dmypy.json
 venv/
 env/
 ENV/
+*.egg
+.cache/
+cache/
+.huggingface/
 
 # Environment & Config
 .env
@@ -47,12 +51,15 @@ backend/.env.*
 *~
 .DS_Store
 Thumbs.db
+*.sublime-*
 
-# Project files
+# Project data files
 *.db
 *.sqlite
 *.sqlite3
 backend/app/uploads/
+db/
+data/
 
 # Documentation & CI
 docs/
@@ -62,6 +69,7 @@ RAILWAY*.md
 railway.json
 .github/
 *.md
+LICENSE
 
 # OS & Misc
 .DS_Store
@@ -70,7 +78,17 @@ Thumbs.db
 *.bak
 *.tmp
 .cache/
-cache/
+*.zip
+*.tar.gz
+*.rar
+
+# Model caches (if any)
+models/
+weights/
+checkpoints/
+*.bin
+*.pt
+*.pth
 *.pot
 DEPLOYMENT*.md
 QUICK_START*.md

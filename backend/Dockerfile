@@ -15,15 +15,12 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --prefix=/install \
     torch==2.1.2 torchvision==0.16.2 \
     && pip install --no-cache-dir --prefix=/install -r requirements.txt \
-    && strip /install/lib/*/site-packages/torch/**/*.so 2>/dev/null || true \
-    && strip /install/lib/*/site-packages/torchvision/**/*.so 2>/dev/null || true \
-    && find /install -type d -name "tests" -exec rm -rf {} + 2>/dev/null || true \
-    && find /install -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true \
+    && find /install -type f -name "*.so" -exec strip -s {} \; 2>/dev/null || true \
+    && find /install -type d \( -name "tests" -o -name "__pycache__" -o -name "*.dist-info" -o -name "*.egg-info" -o -name "examples" -o -name "test" -o -name ".pytest_cache" \) -exec rm -rf {} + 2>/dev/null || true \
     && find /install -type f -name "*.pyc" -delete \
-    && find /install -type d -name "*.dist-info" -exec rm -rf {} + 2>/dev/null || true \
-    && find /install -type d -name "*.egg-info" -exec rm -rf {} + 2>/dev/null || true \
-    && find /install/lib -type d -name "examples" -exec rm -rf {} + 2>/dev/null || true \
-    && find /install/lib -type d -name "test*" -exec rm -rf {} + 2>/dev/null || true
+    && find /install -type f -name "*.pyo" -delete \
+    && find /install -type f -name "*.pyd" -delete \
+    && find /install -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
 
 # Final runtime image
 FROM python:3.11-slim
@@ -34,22 +31,21 @@ WORKDIR /app
 # Copy installed dependencies from the builder stage
 COPY --from=builder /install /usr/local
 
-# Copy application files (exclude large unnecessary files)
-COPY . .
+# Copy only the backend application (not frontend, docs, etc.)
+COPY backend/app ./app
+COPY backend/.env* ./
 
-# Copy .env file if it exists
-COPY .env* ./
-
-# Clean up unnecessary files
-RUN find /usr/local -type d -name "tests" -exec rm -rf {} + 2>/dev/null || true && \
-    find /usr/local -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true && \
-    find /usr/local -type f -name "*.pyc" -delete && \
-    find /usr/local -type d -name "*.dist-info" -exec rm -rf {} + 2>/dev/null || true && \
-    find /usr/local -type d -name "*.egg-info" -exec rm -rf {} + 2>/dev/null || true && \
+# Minimal cleanup of installed dependencies
+RUN find /usr/local -type f -name "*.so" -exec strip -s {} \; 2>/dev/null || true && \
+    find /usr/local -type d \( -name "tests" -o -name "__pycache__" -o -name "*.dist-info" -o -name "*.egg-info" -o -name "examples" -o -name "test" -o -name ".pytest_cache" -o -name "docs" \) -exec rm -rf {} + 2>/dev/null || true && \
+    find /usr/local -type f \( -name "*.pyc" -o -name "*.pyo" -o -name "*.pyd" \) -delete && \
     rm -rf /usr/local/share/doc /usr/local/share/man /usr/local/share/info && \
-    find /usr/local/lib -type d -name "examples" -exec rm -rf {} + 2>/dev/null || true && \
-    find /usr/local/lib -type d -name "test*" -exec rm -rf {} + 2>/dev/null || true && \
-    python3 -m compileall -b -q /usr/local 2>/dev/null || true
+    rm -rf /usr/local/lib/python*/site-packages/torch/test* && \
+    rm -rf /usr/local/lib/python*/site-packages/torchvision/test* && \
+    rm -rf /usr/local/lib/python*/site-packages/*/tests && \
+    rm -rf /usr/local/include && \
+    find /usr/local -name "*.a" -delete && \
+    find /usr/local -name "*.la" -delete
 
 # Set working directory to backend
 WORKDIR /app/backend

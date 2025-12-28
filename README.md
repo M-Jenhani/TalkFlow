@@ -1,10 +1,11 @@
-[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen?style=for-the-badge&logo=github)](https://talk-flow-six.vercel.app/)
+# TalkFlow
+[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen?style=for-the-badge&logo=github)](https://talkflow-demo.vercel.app)
 
-🌐 Live Demo : [https://talk-flow-six.vercel.app/](https://movie-mate-mauve.vercel.app/)  
+🌐 Live Demo : [https://talkflow-demo.vercel.app](https://talkflow-demo.vercel.app)  
 *Note: The backend is hosted on Render's free tier. If the site takes time to load, it may be waking up due to inactivity.*
 
 ---
-# TalkFlow
+# TalkFlow : Full-stack AI chatbot
 
 TalkFlow is a full-stack AI chatbot with advanced RAG capabilities:
 
@@ -96,6 +97,9 @@ npm run dev
 ```
 
 ## Notes
+
+Backend URL : [https://eventhub-backend-z1da.onrender.com](https://eventhub-backend-z1da.onrender.com)
+*Note: For testing visit https://eventhub-backend-z1da.onrender.com/docs*
 
 - The backend uses **Hugging Face Inference API** (free tier) with Llama 3.2-3B-Instruct for high-quality responses
 - Embeddings run locally using sentence-transformers/all-MiniLM-L6-v2 (no API needed)

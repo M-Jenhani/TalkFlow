@@ -6,67 +6,47 @@ import { useEffect, useState } from 'react'
 
 export default function Page() {
   const [showUpload, setShowUpload] = useState(false)
-  const [backendStatus, setBackendStatus] = useState<'checking' | 'active' | 'inactive'>('checking')
+  const [backendStatus, setBackendStatus] = useState<'checking' | 'active'>('checking')
+  const [showBackendBanner, setShowBackendBanner] = useState(false)
 
   useEffect(() => {
+    let didCancel = false;
+    let timeoutId: NodeJS.Timeout;
     const checkBackend = async () => {
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/health`)
-        if (res.ok) {
-          setBackendStatus('active')
-        } else {
-          setBackendStatus('inactive')
+        if (!didCancel) {
+          if (res.ok) {
+            setBackendStatus('active')
+            setShowBackendBanner(false)
+          } else {
+            setShowBackendBanner(true)
+          }
         }
       } catch {
-        setBackendStatus('inactive')
+        if (!didCancel) setShowBackendBanner(true)
       }
     }
-
     checkBackend()
-  }, [])
+    // Show banner if backend doesn't respond in 5 seconds
+    timeoutId = setTimeout(() => {
+      if (!didCancel && backendStatus === 'checking') {
+        setShowBackendBanner(true)
+      }
+    }, 5000)
+    // Keep polling until backend is up
+    const poll = setInterval(() => {
+      if (backendStatus === 'checking') checkBackend()
+      else clearInterval(poll)
+    }, 3000)
+    return () => {
+      didCancel = true
+      clearTimeout(timeoutId)
+      clearInterval(poll)
+    }
+  }, [backendStatus])
 
-  if (backendStatus === 'checking') {
-    return (
-      <div style={{
-        height: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        background: 'var(--bg-primary)',
-        color: 'var(--text-primary)',
-        fontSize: '18px'
-      }}>
-        <div>
-          <p>Checking backend status...</p>
-          <div className="spinner" style={{
-            width: '40px',
-            height: '40px',
-            border: '4px solid var(--bg-secondary)',
-            borderTop: '4px solid var(--accent)',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite'
-          }}></div>
-        </div>
-      </div>
-    )
-  }
-
-  if (backendStatus === 'inactive') {
-    return (
-      <div style={{
-        height: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        background: 'var(--bg-primary)',
-        color: 'var(--text-primary)',
-        fontSize: '18px'
-      }}>
-        <p>The backend is currently waking up due to inactivity on Render's free tier. This may take 30-60 seconds. Please wait.</p>
-      </div>
-    )
-  }
-
+  // Always render the UI, but show banner/spinner if backend is not ready
   return (
     <div style={{
       height: '100vh',
@@ -74,6 +54,49 @@ export default function Page() {
       flexDirection: 'column',
       background: 'var(--bg-primary)'
     }}>
+      {/* Backend status banner */}
+      {backendStatus === 'checking' && (
+        <div style={{
+          width: '100%',
+          background: 'var(--bg-secondary)',
+          color: 'var(--text-primary)',
+          padding: '8px 0',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '12px',
+          fontSize: '16px',
+          borderBottom: '1px solid var(--border)',
+          zIndex: 1000
+        }}>
+          <div className="spinner" style={{
+            width: '24px',
+            height: '24px',
+            border: '3px solid var(--bg-primary)',
+            borderTop: '3px solid var(--accent)',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            marginRight: '8px'
+          }}></div>
+          Checking backend status...
+        </div>
+      )}
+      {showBackendBanner && (
+        <div style={{
+          width: '100%',
+          background: '#f59e42',
+          color: '#222',
+          padding: '8px 0',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '15px',
+          borderBottom: '1px solid #eab308',
+          zIndex: 1000
+        }}>
+          <span style={{marginLeft: '8px'}}>The backend is waking up due to inactivity on Render's free tier. This may take 30-60 seconds. Please wait.</span>
+        </div>
+      )}
       {/* Header */}
       <header style={{
         borderBottom: '1px solid var(--border)',
@@ -157,7 +180,7 @@ export default function Page() {
         <Chat />
       </div>
 
-      <style jsx>{`
+      <style global jsx>{`
         @keyframes spin {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }

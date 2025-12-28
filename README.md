@@ -98,7 +98,7 @@ npm run dev
 
 ## Notes
 
-🌐 Backend URL : [https://eventhub-backend-z1da.onrender.com](https://eventhub-backend-z1da.onrender.com)  
+🌐 Backend URL : [https://talkflow-b01t.onrender.com](https://talkflow-b01t.onrender.com)  
 
 *Note: For testing visit https://eventhub-backend-z1da.onrender.com/docs*
 

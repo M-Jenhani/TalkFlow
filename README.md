@@ -5,6 +5,12 @@
 *Note: The backend is hosted on Render's free tier. If the site takes time to load, it may be waking up due to inactivity.*
 
 ---
+## 📸 Screenshot
+
+### Chatbot
+![Chatbot](screenshots/chatbot.png)
+
+
 # TalkFlow : Full-stack AI chatbot
 
 TalkFlow is a full-stack AI chatbot with advanced RAG capabilities:

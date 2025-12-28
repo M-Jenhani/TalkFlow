@@ -2,10 +2,70 @@
 
 import Chat from '../components/Chat'
 import Upload from '../components/Upload'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function Page() {
   const [showUpload, setShowUpload] = useState(false)
+  const [backendStatus, setBackendStatus] = useState<'checking' | 'active' | 'inactive'>('checking')
+
+  useEffect(() => {
+    const checkBackend = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/health`)
+        if (res.ok) {
+          setBackendStatus('active')
+        } else {
+          setBackendStatus('inactive')
+        }
+      } catch {
+        setBackendStatus('inactive')
+      }
+    }
+
+    checkBackend()
+  }, [])
+
+  if (backendStatus === 'checking') {
+    return (
+      <div style={{
+        height: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        background: 'var(--bg-primary)',
+        color: 'var(--text-primary)',
+        fontSize: '18px'
+      }}>
+        <div>
+          <p>Checking backend status...</p>
+          <div className="spinner" style={{
+            width: '40px',
+            height: '40px',
+            border: '4px solid var(--bg-secondary)',
+            borderTop: '4px solid var(--accent)',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+          }}></div>
+        </div>
+      </div>
+    )
+  }
+
+  if (backendStatus === 'inactive') {
+    return (
+      <div style={{
+        height: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        background: 'var(--bg-primary)',
+        color: 'var(--text-primary)',
+        fontSize: '18px'
+      }}>
+        <p>The backend is currently waking up due to inactivity on Render's free tier. This may take 30-60 seconds. Please wait.</p>
+      </div>
+    )
+  }
 
   return (
     <div style={{
@@ -99,3 +159,10 @@ export default function Page() {
     </div>
   )
 }
+
+<style jsx>{`
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`}</style>

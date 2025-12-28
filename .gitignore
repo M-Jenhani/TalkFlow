@@ -13,3 +13,5 @@ chromadb/
 backend/app/uploads/
 .env
 backend/.env
+# Ignore Render deployment guide
+RENDER_DEPLOYMENT.md

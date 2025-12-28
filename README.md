@@ -98,7 +98,8 @@ npm run dev
 
 ## Notes
 
-Backend URL : [https://eventhub-backend-z1da.onrender.com](https://eventhub-backend-z1da.onrender.com)
+🌐 Backend URL : [https://eventhub-backend-z1da.onrender.com](https://eventhub-backend-z1da.onrender.com)  
+
 *Note: For testing visit https://eventhub-backend-z1da.onrender.com/docs*
 
 - The backend uses **Hugging Face Inference API** (free tier) with Llama 3.2-3B-Instruct for high-quality responses
